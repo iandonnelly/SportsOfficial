@@ -4,7 +4,7 @@
         ""
     ],
     "companyName": "easyxtarget@gmail.com",
-    "longName": "CommunicationTest",
+    "longName": "SportsOfficial",
     "projectType": "native",
     "resources": {
         "media": [
@@ -21,7 +21,7 @@
         ]
     },
     "sdkVersion": "2",
-    "shortName": "CommunicationTest",
+    "shortName": "SportsOfficial",
     "uuid": "432e9210-e61d-49e2-874f-e899af0472e5",
     "versionCode": 1,
     "versionLabel": "1.0",

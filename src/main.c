@@ -9,14 +9,28 @@
 #define COUNTER_MAX 9999
 #define COUNTER_MIN -9999
 #define MAX_DIGITS 4
+#define MAX_NUMBER_OF_SCORES 200
   
-#define TEMP_SINGLE_CLICK_KEY 1
-#define TEMP_DOUBLE_CLICK_KEY -1
-#define TEMP_LONG_CLICK_KEY 5
+#define DEFAULT_SINGLE_CLICK 1
+#define DEFUALT_DOUBLE_CLICK -1
+#define DEFAULT_LONG_CLICK_KEY 5
   
+//Define key numbers for data syncing
+#define HOME_SCORE_KEY 0
+#define AWAY_SCORE_KEY 1
+
 #define SINGLE_CLICK_KEY 10
 #define DOUBLE_CLICK_KEY 11
 #define LONG_CLICK_KEY 12
+  
+#define DETAILED_POINTS_START 100
+  
+//Struct
+typedef struct {
+  char team;
+  int ATeam;
+  int BTeam;
+} Scores;
 
 //---Interface Variables---
 Window* window;
@@ -38,6 +52,11 @@ int teamBCounter;
 int singleClickIncrement;
 int longClickIncrement;
 int doubleClickIncrement;
+
+//---Holds score whenever scored---
+Scores score;
+Scores scoreArray[200];
+int score_counter;
 
 //---The Time
 static double elapsed_time = 0;
@@ -108,6 +127,25 @@ void update_stopwatch() {
     text_layer_set_text(seconds_time_layer, hours < 1 ? deciseconds_time : seconds_time);
 }
 
+//AppMessage Callbacks
+static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
+  APP_LOG(APP_LOG_LEVEL_INFO, "Message received!");
+}
+
+static void inbox_dropped_callback(AppMessageResult reason, void *context) {
+  APP_LOG(APP_LOG_LEVEL_ERROR, "Message dropped!");
+}
+
+static void outbox_failed_callback(DictionaryIterator *iterator, AppMessageResult reason, void *context) {
+  APP_LOG(APP_LOG_LEVEL_ERROR, "Outbox send failed!");
+}
+
+static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
+  APP_LOG(APP_LOG_LEVEL_INFO, "Outbox send success!");
+}
+
+
+//Click Handlers
 void select_click_long_handler(ClickRecognizerRef recognizer, Window *window) {           //pressed SELECT LONG
     bool is_running = started;
     stop_stopwatch();
@@ -134,6 +172,25 @@ void handle_timer(void* data) {
 	update_stopwatch();
 }
 
+//------------------------------------------------------------------------>Here holds when anyone scores!!<---
+static void score_change(bool home){
+  if(score_counter >= MAX_NUMBER_OF_SCORES - 1)
+    score_counter = 0;
+  
+  if(home)
+    score.team = 'H';
+  else
+    score.team = 'A';
+  
+  score.ATeam = teamACounter;
+  score.BTeam = teamBCounter;
+  
+  //Holds team that scored, team A score, team B score
+  scoreArray[score_counter] = score;  //<-------------------------------------holds the scores<----
+  
+  score_counter++;
+}
+
 static int increment_value(int team_score, const int increment){
   if(team_score + increment <= COUNTER_MAX && team_score + increment >= COUNTER_MIN)
      team_score = team_score + increment;
@@ -143,31 +200,37 @@ static int increment_value(int team_score, const int increment){
 
 static void up_multi_click_handler(ClickRecognizerRef recognizer, void *context) {       //pressed UP MULTI
   teamACounter = increment_value(teamACounter, doubleClickIncrement);
+  score_change(true);
   layer_mark_dirty(layer);
 }
 
 static void up_click_long_handler(ClickRecognizerRef recognizer, void *context) {        //pressed UP LONG
   teamACounter = increment_value(teamACounter, longClickIncrement);
+  score_change(true);
   layer_mark_dirty(layer);
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {             //pressed UP 
   teamACounter = increment_value(teamACounter, singleClickIncrement);
+  score_change(true);
   layer_mark_dirty(layer);
 }
 
 static void down_multi_click_handler(ClickRecognizerRef recognizer, void *context) {     //pressed DOWN MULTI
   teamBCounter = increment_value(teamBCounter, doubleClickIncrement);
+  score_change(false);
   layer_mark_dirty(layer);
 }
 
 static void down_click_long_handler(ClickRecognizerRef recognizer, void *context) {     //pressed DOWN LONG
   teamBCounter = increment_value(teamBCounter, longClickIncrement);
+  score_change(false);
   layer_mark_dirty(layer);
 }
 
 static void down_click_handler(ClickRecognizerRef recognizer, void *context) {          //pressed DOWN
   teamBCounter = increment_value(teamBCounter, singleClickIncrement);
+  score_change(false);
   layer_mark_dirty(layer);
 }
 
@@ -186,7 +249,6 @@ static void click_config_provider(void *context) {
 
 static void update_layer(Layer *layer, GContext *ctx){
   GRect bounds = layer_get_frame(layer);
-  counterFont = fonts_load_custom_font(resource_get_handle(COUNTER_FONT_49));
   
   graphics_context_set_text_color(ctx, GColorBlack);
   
@@ -239,11 +301,11 @@ void handle_init(void) {
   //Set the counters start
   teamACounter = COUNTER_START;
   teamBCounter = COUNTER_START;
-  
+  score_counter = 0;
 //-----Temp Values----- 
-  singleClickIncrement = TEMP_SINGLE_CLICK_KEY;
-  doubleClickIncrement = TEMP_DOUBLE_CLICK_KEY;
-  longClickIncrement   = TEMP_LONG_CLICK_KEY;
+  singleClickIncrement = DEFAULT_SINGLE_CLICK;
+  doubleClickIncrement = DEFUALT_DOUBLE_CLICK;
+  longClickIncrement   = DEFAULT_LONG_CLICK_KEY;
   
 //-----Stored Values-----
   if(persist_exists(SINGLE_CLICK_KEY))
@@ -255,6 +317,7 @@ void handle_init(void) {
   
   Layer *root_layer = window_get_root_layer(window);
   stopwatchFont = fonts_load_custom_font(resource_get_handle(STOPWATCH_FONT_24));
+  counterFont = fonts_load_custom_font(resource_get_handle(COUNTER_FONT_49));
   
   //-----Display Stop Watch-----
   big_time_layer = text_layer_create(GRect(0, 65, 86, 35));
