@@ -1,0 +1,31 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        ""
+    ],
+    "companyName": "easyxtarget@gmail.com",
+    "longName": "CommunicationTest",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "file": "fonts/Sports World-Regular.ttf",
+                "name": "SPORTS_WORLD_24",
+                "type": "font"
+            },
+            {
+                "file": "fonts/MACHINE GUN.ttf",
+                "name": "MACHINE_GUN_49",
+                "type": "font"
+            }
+        ]
+    },
+    "sdkVersion": "2",
+    "shortName": "CommunicationTest",
+    "uuid": "432e9210-e61d-49e2-874f-e899af0472e5",
+    "versionCode": 1,
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": false
+    }
+}
