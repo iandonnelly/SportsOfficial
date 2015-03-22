@@ -16,8 +16,9 @@
 #define DEFAULT_LONG_CLICK_KEY 5
   
 //Define key numbers for data syncing
-#define HOME_SCORE_KEY 0
-#define AWAY_SCORE_KEY 1
+#define SYNC_KEY 0
+#define HOME_SCORE_KEY 1
+#define AWAY_SCORE_KEY 2
 
 #define SINGLE_CLICK_KEY 10
 #define DOUBLE_CLICK_KEY 11
@@ -130,6 +131,36 @@ void update_stopwatch() {
 //AppMessage Callbacks
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
   APP_LOG(APP_LOG_LEVEL_INFO, "Message received!");
+  // Get the first pair
+  Tuple *t = dict_read_first(iterator);
+
+  // Process all pairs present
+  while (t != NULL) {
+    // Long lived buffer
+    static char s_buffer[64];
+
+    // Process this pair's key
+    switch (t->key) {
+      case SINGLE_CLICK_KEY:
+        // Set SINGLE_CLICK
+        singleClickIncrement = t->value->int32;
+        break;
+      case DOUBLE_CLICK_KEY:
+        //Set DOUBLE_CLICK
+        doubleClickIncrement = t->value->int32;
+        break;
+      case LONG_CLICK_KEY:
+        //Set LONG_CLICK
+        longClickIncrement = t->value->int32;
+        break;
+      case SYNC_KEY:
+        //Sync the motherfucker
+        break;
+    }
+
+    // Get next pair, if any
+    t = dict_read_next(iterator);
+  }
 }
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
@@ -291,6 +322,16 @@ static void window_unload(Window *window) {
 }
 
 void handle_init(void) {
+  // Register callbacks
+  app_message_register_inbox_received(inbox_received_callback);
+  app_message_register_inbox_dropped(inbox_dropped_callback);
+  app_message_register_outbox_failed(outbox_failed_callback);
+  app_message_register_outbox_sent(outbox_sent_callback);
+  
+  // Open AppMessage
+  app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
+  
+  //Build Window
   window = window_create();
   window_set_click_config_provider(window, click_config_provider);
   window_set_window_handlers(window, (WindowHandlers) {
@@ -302,6 +343,7 @@ void handle_init(void) {
   teamACounter = COUNTER_START;
   teamBCounter = COUNTER_START;
   score_counter = 0;
+  
 //-----Temp Values----- 
   singleClickIncrement = DEFAULT_SINGLE_CLICK;
   doubleClickIncrement = DEFUALT_DOUBLE_CLICK;
