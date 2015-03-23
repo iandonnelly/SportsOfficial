@@ -19,11 +19,13 @@
 #define SYNC_KEY 0
 #define HOME_SCORE_KEY 1
 #define AWAY_SCORE_KEY 2
+#define NUM_SCORES_KEY 3
 
 #define SINGLE_CLICK_KEY 10
 #define DOUBLE_CLICK_KEY 11
 #define LONG_CLICK_KEY 12
   
+
 #define DETAILED_POINTS_START 100
   
 //Struct
@@ -135,6 +137,7 @@ static void sync(){
   //Create Tuplets for score
   Tuplet home_score = TupletInteger(HOME_SCORE_KEY, teamACounter);
   Tuplet away_score = TupletInteger(AWAY_SCORE_KEY, teamBCounter);
+  Tuplet num_scored = TupletInteger(NUM_SCORES_KEY, score_counter);
   
   //Add to dict
   DictionaryIterator *iter;
