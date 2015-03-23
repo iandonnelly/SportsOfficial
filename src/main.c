@@ -29,8 +29,10 @@
 //Struct
 typedef struct {
   char team;
-  int ATeam;
-  int BTeam;
+  int points_scored;
+  int teamACounter;
+  int teamBCounter;
+  int time;
 } Scores;
 
 //---Interface Variables---
@@ -128,6 +130,44 @@ void update_stopwatch() {
     text_layer_set_text(seconds_time_layer, hours < 1 ? deciseconds_time : seconds_time);
 }
 
+//Sync function
+static void sync(){
+  //Create Tuplets for score
+  Tuplet home_score = TupletInteger(HOME_SCORE_KEY, teamACounter);
+  Tuplet away_score = TupletInteger(AWAY_SCORE_KEY, teamBCounter);
+  
+  //Add to dict
+  DictionaryIterator *iter;
+  app_message_outbox_begin(&iter);
+  dict_write_tuplet(iter, &home_score);
+  dict_write_tuplet(iter, &away_score);
+  
+  //Error
+  if (iter == NULL)
+    return;
+  
+  //Sync score info
+  //Tuplet score_info[score_counter];
+  for(int i = 0; i < score_counter; i++){
+    //Create tuplet for each score struct
+    char * score_string = malloc(20);
+    strcpy(score_string, "");
+    snprintf(score_string, 20, "%c,%d,%d", scoreArray[i].team, scoreArray[i].points_scored, scoreArray[i].time);
+    Tuplet score_info = TupletCString(i+100, score_string);
+    
+    //Add to dict
+    dict_write_tuplet(iter, &score_info);
+    
+    free(score_string);
+  }
+  
+  //End dict
+  dict_write_end(iter);
+  
+  //Send it
+  app_message_outbox_send();  
+}
+
 //AppMessage Callbacks
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
   APP_LOG(APP_LOG_LEVEL_INFO, "Message received!");
@@ -137,7 +177,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   // Process all pairs present
   while (t != NULL) {
     // Long lived buffer
-    static char s_buffer[64];
+    //static char s_buffer[64];
 
     // Process this pair's key
     switch (t->key) {
@@ -155,6 +195,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
         break;
       case SYNC_KEY:
         //Sync the motherfucker
+        sync();
         break;
     }
 
@@ -208,13 +249,18 @@ static void score_change(bool home){
   if(score_counter >= MAX_NUMBER_OF_SCORES - 1)
     score_counter = 0;
   
-  if(home)
+  if(home){
     score.team = 'H';
-  else
+    score.points_scored = teamACounter - scoreArray[score_counter-1].teamACounter;
+  }
+  else{
     score.team = 'A';
+    score.points_scored = teamBCounter - scoreArray[score_counter-1].teamBCounter;
+  }
   
-  score.ATeam = teamACounter;
-  score.BTeam = teamBCounter;
+  score.teamACounter = teamACounter;
+  score.teamBCounter = teamBCounter;
+  score.time = (int)elapsed_time;
   
   //Holds team that scored, team A score, team B score
   scoreArray[score_counter] = score;  //<-------------------------------------holds the scores<----
