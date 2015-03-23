@@ -251,11 +251,17 @@ static void score_change(bool home){
   
   if(home){
     score.team = 'H';
-    score.points_scored = teamACounter - scoreArray[score_counter-1].teamACounter;
+    if(score_counter == 0)
+      score.points_scored = teamACounter;
+    else
+      score.points_scored = teamACounter - scoreArray[score_counter-1].teamACounter;
   }
   else{
     score.team = 'A';
-    score.points_scored = teamBCounter - scoreArray[score_counter-1].teamBCounter;
+    if(score_counter == 0)
+      score.points_scored = teamBCounter;
+    else
+      score.points_scored = teamBCounter - scoreArray[score_counter-1].teamBCounter;
   }
   
   score.teamACounter = teamACounter;
