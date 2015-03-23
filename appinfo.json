@@ -9,6 +9,12 @@
     "resources": {
         "media": [
             {
+                "file": "images/running.png",
+                "menuIcon": true,
+                "name": "MENU_ICON",
+                "type": "png"
+            },
+            {
                 "file": "fonts/Sports World-Regular.ttf",
                 "name": "SPORTS_WORLD_24",
                 "type": "font"
