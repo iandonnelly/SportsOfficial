@@ -144,6 +144,7 @@ static void sync(){
   app_message_outbox_begin(&iter);
   dict_write_tuplet(iter, &home_score);
   dict_write_tuplet(iter, &away_score);
+  dict_write_tuplet(iter, &num_scored);
   
   //Error
   if (iter == NULL)
@@ -443,6 +444,9 @@ void handle_init(void) {
 }
 
 void handle_deinit(void) {
+  persist_write_int(SINGLE_CLICK_KEY, singleClickIncrement);
+  persist_write_int(DOUBLE_CLICK_KEY, singleClickIncrement);
+  persist_write_int(LONG_CLICK_KEY, singleClickIncrement);
   window_destroy(window);
 }
 
