@@ -181,21 +181,24 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   // Process all pairs present
   while (t != NULL) {
     // Long lived buffer
-    //static char s_buffer[64];
+    //static char s_buffer[64];  
 
     // Process this pair's key
     switch (t->key) {
       case SINGLE_CLICK_KEY:
         // Set SINGLE_CLICK
         singleClickIncrement = t->value->int32;
+        persist_write_int(SINGLE_CLICK_KEY, singleClickIncrement);
         break;
       case DOUBLE_CLICK_KEY:
         //Set DOUBLE_CLICK
         doubleClickIncrement = t->value->int32;
+        persist_write_int(DOUBLE_CLICK_KEY, doubleClickIncrement);
         break;
       case LONG_CLICK_KEY:
         //Set LONG_CLICK
         longClickIncrement = t->value->int32;
+        persist_write_int(LONG_CLICK_KEY, longClickIncrement);
         break;
       case SYNC_KEY:
         //Sync the motherfucker
@@ -407,11 +410,11 @@ void handle_init(void) {
   
 //-----Stored Values-----
   if(persist_exists(SINGLE_CLICK_KEY))
-     singleClickIncrement = persist_read_int(SINGLE_CLICK_KEY);
+    singleClickIncrement = persist_read_int(SINGLE_CLICK_KEY);
   if(persist_exists(DOUBLE_CLICK_KEY))
-     singleClickIncrement = persist_read_int(DOUBLE_CLICK_KEY);
+     doubleClickIncrement = persist_read_int(DOUBLE_CLICK_KEY);
   if(persist_exists(LONG_CLICK_KEY))
-     singleClickIncrement = persist_read_int(LONG_CLICK_KEY);
+     longClickIncrement = persist_read_int(LONG_CLICK_KEY);
   
   Layer *root_layer = window_get_root_layer(window);
   stopwatchFont = fonts_load_custom_font(resource_get_handle(STOPWATCH_FONT_24));
@@ -444,9 +447,6 @@ void handle_init(void) {
 }
 
 void handle_deinit(void) {
-  persist_write_int(SINGLE_CLICK_KEY, singleClickIncrement);
-  persist_write_int(DOUBLE_CLICK_KEY, singleClickIncrement);
-  persist_write_int(LONG_CLICK_KEY, singleClickIncrement);
   window_destroy(window);
 }
 
