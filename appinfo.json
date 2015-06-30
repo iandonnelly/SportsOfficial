@@ -1,7 +1,7 @@
 {
     "appKeys": {},
     "capabilities": [
-        ""
+        "configurable"
     ],
     "companyName": "easyxtarget@gmail.com",
     "longName": "SportsOfficial",
@@ -26,10 +26,13 @@
             }
         ]
     },
-    "sdkVersion": "2",
+    "sdkVersion": "3",
     "shortName": "SportsOfficial",
-    "uuid": "432e9210-e61d-49e2-874f-e899af0472e5",
-    "versionCode": 1,
+    "targetPlatforms": [
+        "aplite",
+        "basalt"
+    ],
+    "uuid": "583e735b-7970-498c-98e8-818f163b4277",
     "versionLabel": "1.0",
     "watchapp": {
         "watchface": false
