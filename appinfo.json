@@ -1,5 +1,9 @@
 {
-    "appKeys": {},
+    "appKeys": {
+        "DOUBLE_CLICK_KEY": 11,
+        "LONG_CLICK_KEY": 12,
+        "SINGLE_CLICK_KEY": 10
+    },
     "capabilities": [
         "configurable"
     ],
@@ -26,13 +30,10 @@
             }
         ]
     },
-    "sdkVersion": "3",
+    "sdkVersion": "2",
     "shortName": "SportsOfficial",
-    "targetPlatforms": [
-        "aplite",
-        "basalt"
-    ],
     "uuid": "583e735b-7970-498c-98e8-818f163b4277",
+    "versionCode": 1,
     "versionLabel": "1.0",
     "watchapp": {
         "watchface": false
