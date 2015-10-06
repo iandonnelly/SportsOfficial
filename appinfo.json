@@ -30,11 +30,14 @@
             }
         ]
     },
-    "sdkVersion": "2",
+    "sdkVersion": "3",
     "shortName": "SportsOfficial",
+    "targetPlatforms": [
+        "aplite",
+        "basalt"
+    ],
     "uuid": "583e735b-7970-498c-98e8-818f163b4277",
-    "versionCode": 1,
-    "versionLabel": "1.0",
+    "versionLabel": "1.1",
     "watchapp": {
         "watchface": false
     }

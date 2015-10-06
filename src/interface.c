@@ -4,7 +4,14 @@
 void update_layer(Layer *layer, GContext *ctx){
   GRect bounds = layer_get_frame(layer);
   
-  graphics_context_set_text_color(ctx, GColorBlack);
+  //Handle Colors!
+  #ifdef PBL_COLOR //If a color display
+    graphics_context_set_text_color(ctx, GColorYellow);
+    //graphics_context_set_fill_color(ctx, GColorBlack);
+  #else
+    graphics_context_set_text_color(ctx, GColorBlack);
+    //graphics_context_set_fill_color(ctx, GColorWhite);
+  #endif
   
   snprintf(home_counter_text, (MAX_DIGITS + 2)*sizeof(char), "%d", homeCounter);
   graphics_draw_text(ctx, 

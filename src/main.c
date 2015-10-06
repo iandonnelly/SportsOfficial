@@ -40,6 +40,14 @@ static void init(void) {
   
   //Build Window
   window = window_create();
+  
+  //Colors
+  #ifdef PBL_COLOR
+    window_set_background_color(window, GColorBlack);
+  #else
+    window_set_background_color(window, GColorWhite);
+  #endif
+    
   window_set_click_config_provider(window, click_config_provider);
   window_set_window_handlers(window, (WindowHandlers) {
 	  .load = window_load,
@@ -71,14 +79,32 @@ static void init(void) {
   //-----Display Stop Watch-----
   big_time_layer = text_layer_create(GRect(0, 65, 86, 35));
   text_layer_set_text_alignment(big_time_layer, GTextAlignmentRight);
-  text_layer_set_background_color(big_time_layer, GColorClear);
+  
+  //Colors
+  #ifdef PBL_COLOR
+    text_layer_set_background_color(big_time_layer, GColorBlack);
+    text_layer_set_text_color(big_time_layer, GColorYellow);
+  #else
+    text_layer_set_background_color(big_time_layer, GColorClear);
+    text_layer_set_text_color(big_time_layer, GColorBlack);
+  #endif
+    
   text_layer_set_text(big_time_layer, "00:00");
   text_layer_set_font(big_time_layer, stopwatchFont);
   layer_add_child(root_layer, (Layer*)big_time_layer);
   
   seconds_time_layer = text_layer_create(GRect(86, 65, 49, 35));
   text_layer_set_text(seconds_time_layer, ".0");
-  text_layer_set_background_color(seconds_time_layer, GColorClear);
+  
+  //Color
+  #ifdef PBL_COLOR
+    text_layer_set_background_color(seconds_time_layer, GColorBlack);
+    text_layer_set_text_color(seconds_time_layer, GColorYellow);
+  #else
+    text_layer_set_background_color(seconds_time_layer, GColorClear);
+    text_layer_set_text_color(seconds_time_layer, GColorBlack);
+  #endif
+  
   text_layer_set_font(seconds_time_layer, stopwatchFont);
   layer_add_child(root_layer, (Layer*)seconds_time_layer);
   
@@ -86,7 +112,14 @@ static void init(void) {
   home_away_layer = text_layer_create(GRect(124, 0, 20, 152));
   text_layer_set_text(home_away_layer, "\n H\n\n\n\n\n A");
   text_layer_set_background_color(home_away_layer, GColorBlack);
-  text_layer_set_text_color(home_away_layer, GColorWhite);
+  
+  //Colors
+  #ifdef PBL_COLOR
+    text_layer_set_text_color(home_away_layer, GColorYellow);
+  #else
+    text_layer_set_text_color(home_away_layer, GColorWhite);
+  #endif
+  
   text_layer_set_font(home_away_layer, fonts_get_system_font(HOME_AWAY_FONT_18));
   layer_add_child(root_layer, (Layer*)home_away_layer);
   
