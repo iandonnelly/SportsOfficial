@@ -51,6 +51,9 @@ extern TextLayer* awayScore_layer;
 extern TextLayer* big_time_layer;
 extern TextLayer* seconds_time_layer;
 extern TextLayer* home_away_layer;
+#ifdef PBL_SDK_3
+extern StatusBarLayer *s_status_bar;
+#endif
 
 
 //---Counter Variables---
